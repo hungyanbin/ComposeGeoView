@@ -2,7 +2,6 @@ package com.yanbin.geo.serializer
 
 import kotlinx.serialization.Serializable
 
-@Serializable(with = ArcsSerializer::class)
 internal sealed class Arc
 
 internal class MultiArc(val arcs: List<Arc>):
@@ -10,7 +9,6 @@ internal class MultiArc(val arcs: List<Arc>):
 internal class PositionArc(val x: Int, val y: Int):
     Arc()
 
-@Serializable(with = ArcIndexSerializer::class)
 internal sealed class ArcIndex
 
 internal class ArcIntIndex(val indexes: List<Int>):
@@ -28,13 +26,11 @@ internal class ArcIndexList(val indexes: List<ArcIndex>):
     }
 }
 
-@Serializable(with = TransformSerializer::class)
 internal class Transform(
     val scale: Pair<Float, Float>,
     val translate: Pair<Float, Float>
 )
 
-@Serializable(with = GeoObjectSerializer::class)
 internal sealed class GeoObject(val properties: Map<String, String>) {
     class GeoCollection(
         val name: String,

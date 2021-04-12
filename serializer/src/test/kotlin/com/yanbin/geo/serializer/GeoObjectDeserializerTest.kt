@@ -6,7 +6,7 @@ import kotlinx.serialization.decodeFromString
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class GeoObjectSerializerTest {
+internal class GeoObjectDeserializerTest {
 
     @Test
     internal fun `deserialize GeoObject Point`() {
@@ -19,7 +19,8 @@ internal class GeoObjectSerializerTest {
               "coordinates": [4000, 5000]
             }
         """
-        val geoObject = Json.decodeFromString<GeoObject>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val geoObject = GeoObjectDeserializer.deserialize(jsonElement)
 
         assertTrue(geoObject is GeoObject.Point)
 
@@ -41,7 +42,8 @@ internal class GeoObjectSerializerTest {
             }
         """
         assertThrows(SerializationException::class.java) {
-            Json.decodeFromString<GeoObject>(data)
+            val jsonElement = Json.parseToJsonElement(data)
+            GeoObjectDeserializer.deserialize(jsonElement)
         }
     }
 
@@ -56,7 +58,8 @@ internal class GeoObjectSerializerTest {
               "coordinates": [4000, 5000]
             }
         """
-        val geoObject = Json.decodeFromString<GeoObject>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val geoObject = GeoObjectDeserializer.deserialize(jsonElement)
 
         assertEquals("\"value0\"", geoObject.properties["prop0"])
     }
@@ -69,7 +72,8 @@ internal class GeoObjectSerializerTest {
               "coordinates": [4000, 5000]
             }
         """
-        val geoObject = Json.decodeFromString<GeoObject>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val geoObject = GeoObjectDeserializer.deserialize(jsonElement)
 
         assertEquals(0, geoObject.properties.size)
     }

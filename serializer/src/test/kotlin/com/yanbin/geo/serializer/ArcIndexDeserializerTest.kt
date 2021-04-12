@@ -5,12 +5,13 @@ import kotlinx.serialization.decodeFromString
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class ArcIndexSerializerTest {
+internal class ArcIndexDeserializerTest {
 
     @Test
     internal fun `deserialize 1-d ArcIndex`() {
         val data = "[0]"
-        val arcIndex = Json.decodeFromString<ArcIndex>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val arcIndex = ArcIndexDeserializer.deserialize(jsonElement)
 
         assertTrue(arcIndex is ArcIntIndex)
         val arcIntIndex = arcIndex as ArcIntIndex
@@ -21,7 +22,8 @@ internal class ArcIndexSerializerTest {
     @Test
     internal fun `deserialize 2-d ArcIndex`() {
         val data = "[[1, 3]]"
-        val arcIndex = Json.decodeFromString<ArcIndex>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val arcIndex = ArcIndexDeserializer.deserialize(jsonElement)
 
         assertTrue(arcIndex is ArcIndexList)
         val arcIndexList = arcIndex as ArcIndexList

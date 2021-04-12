@@ -5,12 +5,13 @@ import kotlinx.serialization.decodeFromString
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class ArcsSerializerTest {
+internal class ArcsDeserializerTest {
 
     @Test
     internal fun `deserialize 1-d position arcs`() {
         val data = "[4000, 0]"
-        val arcs = Json.decodeFromString<Arc>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val arcs = ArcsDeserializer.deserialize(jsonElement)
 
         assertTrue(arcs is PositionArc)
         val positionArc = arcs as PositionArc
@@ -21,7 +22,8 @@ internal class ArcsSerializerTest {
     @Test
     internal fun `deserialize 2-d multi arcs`() {
         val data = "[[4000, 0], [1999, 9999], [2000, -9999], [2000, 9999]]"
-        val arcs = Json.decodeFromString<Arc>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val arcs = ArcsDeserializer.deserialize(jsonElement)
 
         assertTrue(arcs is MultiArc)
         val multiArc = arcs as MultiArc
@@ -51,7 +53,8 @@ internal class ArcsSerializerTest {
             [[0, 0], [0, 9999], [2000, 0], [0, -9999], [-2000, 0]]
           ]"""
 
-        val arcs = Json.decodeFromString<Arc>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val arcs = ArcsDeserializer.deserialize(jsonElement)
 
         assertTrue(arcs is MultiArc)
         val multiArcLayer1 = arcs as MultiArc

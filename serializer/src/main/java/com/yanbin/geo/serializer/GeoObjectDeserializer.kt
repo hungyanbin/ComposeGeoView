@@ -1,19 +1,12 @@
 package com.yanbin.geo.serializer
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.serialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
-internal object GeoObjectSerializer: KSerializer<GeoObject> {
+internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
 
-    override fun deserialize(decoder: Decoder): GeoObject {
-        val jsonDecoder = decoder as JsonDecoder
-
-        return parseGeoObject(jsonDecoder.decodeJsonElement().jsonObject)
+    override fun deserialize(jsonElement: JsonElement): GeoObject {
+        return parseGeoObject(jsonElement.jsonObject)
     }
 
     private fun parseGeoObject(jsonObject: JsonObject): GeoObject {
@@ -50,12 +43,5 @@ internal object GeoObjectSerializer: KSerializer<GeoObject> {
 
         val coordinates = rawCoordinates[0].jsonPrimitive.float to rawCoordinates[1].jsonPrimitive.float
         return GeoObject.Point(coordinates, properties)
-    }
-
-    override val descriptor: SerialDescriptor
-        get() = serialDescriptor<GeoObject>()
-
-    override fun serialize(encoder: Encoder, value: GeoObject) {
-        throw UnsupportedOperationException("Do not need to serialize Arc in this project!")
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.serialization.decodeFromString
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class TransformSerializerTest {
+internal class TransformDeserializerTest {
 
     @Test
     internal fun `deserialize transform`() {
@@ -16,7 +16,8 @@ internal class TransformSerializerTest {
             "translate": [100, 0]
           }
         """
-        val transform = Json.decodeFromString<Transform>(data)
+        val jsonElement = Json.parseToJsonElement(data)
+        val transform = TransformDeserializer.deserialize(jsonElement)
 
         assertEquals(0.0005f, transform.scale.first)
         assertEquals(0.0001f, transform.scale.second)
@@ -32,7 +33,8 @@ internal class TransformSerializerTest {
           }
         """
         assertThrows(SerializationException::class.java) {
-            Json.decodeFromString<Transform>(data)
+            val jsonElement = Json.parseToJsonElement(data)
+            TransformDeserializer.deserialize(jsonElement)
         }
     }
 
@@ -44,7 +46,8 @@ internal class TransformSerializerTest {
           }
         """
         assertThrows(SerializationException::class.java) {
-            Json.decodeFromString<Transform>(data)
+            val jsonElement = Json.parseToJsonElement(data)
+            TransformDeserializer.deserialize(jsonElement)
         }
     }
 }
