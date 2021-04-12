@@ -37,11 +37,11 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
         }
     }
 
-    private fun parsePoint(jsonObject: JsonObject, properties: Map<String, String>): GeoObject.Point {
+    private fun parsePoint(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
         val rawCoordinates = jsonObject["coordinates"]?.jsonArray ?: throw SerializationException("Should have coordinates for GeoObject.Point")
         require(rawCoordinates.size == 2)
 
         val coordinates = rawCoordinates[0].jsonPrimitive.float to rawCoordinates[1].jsonPrimitive.float
-        return GeoObject.Point(coordinates, properties)
+        return GeoObject(GeoType.Point, properties, coordinates)
     }
 }

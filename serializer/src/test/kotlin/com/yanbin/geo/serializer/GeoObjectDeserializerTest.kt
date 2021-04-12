@@ -22,12 +22,10 @@ internal class GeoObjectDeserializerTest {
         val jsonElement = Json.parseToJsonElement(data)
         val geoObject = GeoObjectDeserializer.deserialize(jsonElement)
 
-        assertTrue(geoObject is GeoObject.Point)
+        assertEquals(GeoType.Point, geoObject.type)
 
-        val point = geoObject as GeoObject.Point
-
-        assertEquals(4000f, point.coordinates.first)
-        assertEquals(5000f, point.coordinates.second)
+        assertEquals(4000f, geoObject.coordinates.first)
+        assertEquals(5000f, geoObject.coordinates.second)
     }
 
 
