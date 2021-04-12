@@ -13,9 +13,6 @@ internal class GeoObjectDeserializerTest {
         val data = """
             {
               "type": "Point",
-              "properties": {
-                "prop0": "value0"
-              },
               "coordinates": [4000, 5000]
             }
         """
@@ -33,10 +30,7 @@ internal class GeoObjectDeserializerTest {
     internal fun `deserialize GeoObject Point with no coordinates should throw SerializationException`() {
         val data = """
             {
-              "type": "Point",
-              "properties": {
-                "prop0": "value0"
-              }
+              "type": "Point"
             }
         """
         assertThrows(SerializationException::class.java) {
@@ -81,10 +75,6 @@ internal class GeoObjectDeserializerTest {
         val data = """
             {
               "type": "LineString",
-              "properties": {
-                "prop0": "value0",
-                "prop1": 0
-              },
               "arcs": [0]
             }
         """
@@ -99,11 +89,7 @@ internal class GeoObjectDeserializerTest {
     internal fun `deserialize GeoObject LineString with no arcs should throw SerializationException`() {
         val data = """
            {
-              "type": "LineString",
-              "properties": {
-                "prop0": "value0",
-                "prop1": 0
-              }
+              "type": "LineString"
            }
         """
         assertThrows(SerializationException::class.java) {
@@ -117,12 +103,6 @@ internal class GeoObjectDeserializerTest {
         val data = """
           {
             "type": "Polygon",
-            "properties": {
-              "prop0": "value0",
-              "prop1": {
-                "this": "that"
-              }
-            },
             "arcs": [[1]]
           }
         """
@@ -137,16 +117,62 @@ internal class GeoObjectDeserializerTest {
     internal fun `deserialize GeoObject Polygon with no arcs should throw SerializationException`() {
         val data = """
            {
-              "type": "Polygon",
-              "properties": {
-                "prop0": "value0",
-                "prop1": 0
-              }
+              "type": "Polygon"
            }
         """
         assertThrows(SerializationException::class.java) {
             val jsonElement = Json.parseToJsonElement(data)
             GeoObjectDeserializer.deserialize(jsonElement)
         }
+    }
+
+    @Test
+    internal fun `deserialize GeoObject MultiPolygon`() {
+        val data = """
+          {
+            "type": "MultiPolygon",
+            "arcs": [[[1]]]
+          }
+        """
+        val jsonElement = Json.parseToJsonElement(data)
+        val geoObject = GeoObjectDeserializer.deserialize(jsonElement)
+
+        assertEquals(GeoType.MultiPolygon, geoObject.type)
+        assertNotNull(geoObject.arcIndex)
+    }
+
+    @Test
+    internal fun `deserialize GeoObject MultiPolygon with no arcs should throw SerializationException`() {
+        val data = """
+           {
+              "type": "MultiPolygon"
+           }
+        """
+        assertThrows(SerializationException::class.java) {
+            val jsonElement = Json.parseToJsonElement(data)
+            GeoObjectDeserializer.deserialize(jsonElement)
+        }
+    }
+
+//    GeoCollection
+
+    @Test
+    internal fun `deserialize GeoObject GeometryCollection`() {
+        val data = """
+          {
+            "type": "GeometryCollection",
+            "geometries": [
+                {
+                  "type": "Point",
+                  "coordinates": [4000, 5000]
+                }
+            ]
+          }
+        """
+        val jsonElement = Json.parseToJsonElement(data)
+        val geoObject = GeoObjectDeserializer.deserialize(jsonElement)
+
+        assertEquals(GeoType.GeometryCollection, geoObject.type)
+        assertNotNull(geoObject.geometries)
     }
 }

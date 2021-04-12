@@ -36,6 +36,7 @@ internal class GeoObject(
     val properties: Map<String, String>,
     val coordinates: Pair<Float, Float>? = null,
     val arcIndex: ArcIndex? = null,
+    val geometries: List<GeoObject>? = null
 ) {
 //    class GeoCollection(
 //        val name: String,
@@ -59,5 +60,5 @@ internal class GeoObject(
 }
 
 internal enum class GeoType {
-    Point, LineString, Polygon
+    Point, LineString, Polygon, MultiPolygon, GeometryCollection
 }

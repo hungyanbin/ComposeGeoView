@@ -29,12 +29,34 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
                 jsonObject,
                 properties
             )
-//            "MultiPolygon" -> parseMultiPolygon(
-//                jsonObject,
-//                properties
-//            )
+            "MultiPolygon" -> parseMultiPolygon(
+                jsonObject,
+                properties
+            )
+            "GeometryCollection" -> parseGeometryCollection(
+                jsonObject,
+                properties
+            )
+            // MultiPoint and MultiLineString not implemented yet
             else -> TODO()
         }
+    }
+
+    private fun parseGeometryCollection(
+        jsonObject: JsonObject,
+        properties: Map<String, String>
+    ): GeoObject {
+        val rawGeometries: JsonArray = jsonObject["geometries"]?.jsonArray ?: throw SerializationException("Should have geometries for GeometryCollection")
+
+        val geometries = rawGeometries.map { jsonElement ->
+            parseGeoObject(jsonElement.jsonObject)
+        }
+
+        return GeoObject(
+            type = GeoType.GeometryCollection,
+            properties = properties,
+            geometries = geometries
+        )
     }
 
     private fun parsePoint(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
@@ -61,6 +83,15 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
         val arcIndexes = parseArcIndexes(jsonObject, GeoType.Polygon)
         return GeoObject(
             type = GeoType.Polygon,
+            properties = properties,
+            arcIndex = arcIndexes
+        )
+    }
+
+    private fun parseMultiPolygon(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
+        val arcIndexes = parseArcIndexes(jsonObject, GeoType.MultiPolygon)
+        return GeoObject(
+            type = GeoType.MultiPolygon,
             properties = properties,
             arcIndex = arcIndexes
         )
