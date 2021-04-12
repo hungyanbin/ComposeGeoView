@@ -2,6 +2,15 @@ package com.yanbin.geo.serializer
 
 import kotlinx.serialization.Serializable
 
+
+@Serializable(with = TopoJsonSerializer::class)
+internal class TopoJSON(
+    val type: String,
+    val geoObject: GeoObject,
+    val arcs: Arc,
+    val transform: Transform?
+)
+
 internal sealed class Arc
 
 internal class MultiArc(val arcs: List<Arc>):
@@ -37,27 +46,7 @@ internal class GeoObject(
     val coordinates: Pair<Float, Float>? = null,
     val arcIndex: ArcIndex? = null,
     val geometries: List<GeoObject>? = null
-) {
-//    class GeoCollection(
-//        val name: String,
-//        val geometries: List<GeoObject>
-//    ): GeoObject(emptyMap())
-//
-//    class LineString(
-//        val arcIndex: ArcIndex,
-//        properties: Map<String, String>
-//    ): GeoObject(properties)
-
-//    class Polygon(
-//        val arcIndex: ArcIndex,
-//        properties: Map<String, String>
-//    ): GeoObject(properties)
-//
-//    class MultiPolygon(
-//        val arcIndex: ArcIndex,
-//        properties: Map<String, String>
-//    ): GeoObject(properties)
-}
+)
 
 internal enum class GeoType {
     Point, LineString, Polygon, MultiPolygon, GeometryCollection
