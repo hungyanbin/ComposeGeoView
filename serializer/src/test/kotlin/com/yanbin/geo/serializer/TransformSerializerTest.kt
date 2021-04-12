@@ -25,7 +25,7 @@ internal class TransformSerializerTest {
     }
 
     @Test
-    internal fun `deserialize transform with no translate`() {
+    internal fun `deserialize transform with no translate should throw SerializationException`() {
         val data = """
             {
             "scale": [0.0005, 0.0001]
@@ -37,7 +37,7 @@ internal class TransformSerializerTest {
     }
 
     @Test
-    internal fun `deserialize transform with no scale`() {
+    internal fun `deserialize transform with no scale should throw SerializationException`() {
         val data = """
             {
             "translate": [100, 0]

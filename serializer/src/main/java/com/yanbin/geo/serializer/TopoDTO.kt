@@ -33,3 +33,31 @@ internal class Transform(
     val scale: Pair<Float, Float>,
     val translate: Pair<Float, Float>
 )
+
+@Serializable(with = GeoObjectSerializer::class)
+internal sealed class GeoObject(val properties: Map<String, String>) {
+    class GeoCollection(
+        val name: String,
+        val geometries: List<GeoObject>
+    ): GeoObject(emptyMap())
+
+    class LineString(
+        val arcIndex: ArcIndex,
+        properties: Map<String, String>
+    ): GeoObject(properties)
+
+    class Point(
+        val coordinates: Pair<Float, Float>,
+        properties: Map<String, String>
+    ): GeoObject(properties)
+
+    class Polygon(
+        val arcIndex: ArcIndex,
+        properties: Map<String, String>
+    ): GeoObject(properties)
+
+    class MultiPolygon(
+        val arcIndex: ArcIndex,
+        properties: Map<String, String>
+    ): GeoObject(properties)
+}
