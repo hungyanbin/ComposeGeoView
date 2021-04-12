@@ -3,9 +3,27 @@ package com.yanbin.geo.serializer
 import kotlinx.serialization.Serializable
 
 @Serializable(with = ArcsSerializer::class)
-sealed class Arc
+internal sealed class Arc
 
-class MultiArc(val arcs: List<Arc>):
+internal class MultiArc(val arcs: List<Arc>):
     Arc()
-class PositionArc(val x: Int, val y: Int):
+internal class PositionArc(val x: Int, val y: Int):
     Arc()
+
+@Serializable(with = ArcIndexSerializer::class)
+internal sealed class ArcIndex
+
+internal class ArcIntIndex(val indexes: List<Int>):
+    ArcIndex() {
+    override fun toString(): String {
+        return indexes.toString()
+    }
+}
+internal class ArcIndexList(val indexes: List<ArcIndex>):
+    ArcIndex() {
+    override fun toString(): String {
+        return indexes.joinToString(", ") {
+            it.toString()
+        }
+    }
+}

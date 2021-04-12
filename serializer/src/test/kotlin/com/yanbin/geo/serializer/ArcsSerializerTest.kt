@@ -19,7 +19,7 @@ internal class ArcsSerializerTest {
     }
 
     @Test
-    internal fun `deserialize 2-d position arcs`() {
+    internal fun `deserialize 2-d multi arcs`() {
         val data = "[[4000, 0], [1999, 9999], [2000, -9999], [2000, 9999]]"
         val arcs = Json.decodeFromString<Arc>(data)
 
@@ -45,7 +45,7 @@ internal class ArcsSerializerTest {
     }
 
     @Test
-    internal fun `deserialize 3-d position arcs`() {
+    internal fun `deserialize 3-d multi arcs`() {
         val data = """[
             [[4000, 0], [1999, 9999], [2000, -9999], [2000, 9999]],
             [[0, 0], [0, 9999], [2000, 0], [0, -9999], [-2000, 0]]

@@ -7,39 +7,35 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
-internal object ArcsSerializer: KSerializer<Arc> {
+internal object ArcIndexSerializer: KSerializer<ArcIndex> {
 
-    override fun deserialize(decoder: Decoder): Arc {
+    override fun deserialize(decoder: Decoder): ArcIndex {
         val jsonDecoder = decoder as JsonDecoder
 
-        return parseArcs(
-            jsonDecoder.decodeJsonElement().jsonArray
+        return parseArcsIndexes(
+            jsonDecoder.decodeJsonElement()
         )
     }
 
-    private fun parseArcs(jsonElement: JsonElement): Arc {
+    private fun parseArcsIndexes(jsonElement: JsonElement): ArcIndex {
         val jsonArray = jsonElement.jsonArray
-        // is position
+        // is int
         return if (jsonArray[0] is JsonPrimitive) {
-            require(jsonArray.size == 2)
-            PositionArc(
-                jsonArray[0].jsonPrimitive.int,
-                jsonArray[1].jsonPrimitive.int
-            )
+            ArcIntIndex(jsonArray.map { it.jsonPrimitive.int })
         } else {
-            val childArcs = jsonArray.map {
-                parseArcs(
+            val childArcIndexes = jsonArray.map {
+                parseArcsIndexes(
                     it
                 )
             }
-            MultiArc(childArcs)
+            ArcIndexList(childArcIndexes)
         }
     }
 
     override val descriptor: SerialDescriptor
-        get() = serialDescriptor<Arc>()
+        get() = serialDescriptor<ArcIndex>()
 
-    override fun serialize(encoder: Encoder, value: Arc) {
+    override fun serialize(encoder: Encoder, value: ArcIndex) {
         throw UnsupportedOperationException("Do not need to serialize Arc in this project!")
     }
 }
