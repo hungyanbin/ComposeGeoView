@@ -21,14 +21,14 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
 
         return when(type) {
             "Point" -> parsePoint(jsonObject, properties)
-//            "Polygon" -> parsePolygon(
-//                jsonObject,
-//                properties
-//            )
-//            "LineString" -> parseGeoLineString(
-//                jsonObject,
-//                properties
-//            )
+            "LineString" -> parseLineString(
+                jsonObject,
+                properties
+            )
+            "Polygon" -> parsePolygon(
+                jsonObject,
+                properties
+            )
 //            "MultiPolygon" -> parseMultiPolygon(
 //                jsonObject,
 //                properties
@@ -38,10 +38,41 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
     }
 
     private fun parsePoint(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
-        val rawCoordinates = jsonObject["coordinates"]?.jsonArray ?: throw SerializationException("Should have coordinates for GeoObject.Point")
+        val rawCoordinates = jsonObject["coordinates"]?.jsonArray ?: throw SerializationException("Should have coordinates for Point")
         require(rawCoordinates.size == 2)
 
         val coordinates = rawCoordinates[0].jsonPrimitive.float to rawCoordinates[1].jsonPrimitive.float
-        return GeoObject(GeoType.Point, properties, coordinates)
+        return GeoObject(
+            type = GeoType.Point,
+            properties = properties,
+            coordinates = coordinates)
+    }
+
+    private fun parseLineString(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
+        val arcIndexes = parseArcIndexes(jsonObject, GeoType.LineString)
+        return GeoObject(
+            type = GeoType.LineString,
+            properties = properties,
+            arcIndex = arcIndexes
+        )
+    }
+
+    private fun parsePolygon(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
+        val arcIndexes = parseArcIndexes(jsonObject, GeoType.Polygon)
+        return GeoObject(
+            type = GeoType.Polygon,
+            properties = properties,
+            arcIndex = arcIndexes
+        )
+    }
+
+    private fun parseArcIndexes(jsonObject: JsonObject, type: GeoType): ArcIndex {
+        val rawArcs = jsonObject["arcs"]?.jsonArray
+            ?: throw SerializationException("Should have arcs for $type")
+        val arcIndexes =
+            ArcIndexDeserializer.deserialize(
+                rawArcs
+            )
+        return arcIndexes
     }
 }

@@ -34,7 +34,9 @@ internal class Transform(
 internal class GeoObject(
     val type: GeoType,
     val properties: Map<String, String>,
-    val coordinates: Pair<Float, Float>) {
+    val coordinates: Pair<Float, Float>? = null,
+    val arcIndex: ArcIndex? = null,
+) {
 //    class GeoCollection(
 //        val name: String,
 //        val geometries: List<GeoObject>
@@ -57,5 +59,5 @@ internal class GeoObject(
 }
 
 internal enum class GeoType {
-    Point, LineString
+    Point, LineString, Polygon
 }
