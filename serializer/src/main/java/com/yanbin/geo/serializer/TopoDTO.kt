@@ -27,3 +27,9 @@ internal class ArcIndexList(val indexes: List<ArcIndex>):
         }
     }
 }
+
+@Serializable(with = TransformSerializer::class)
+internal class Transform(
+    val scale: Pair<Float, Float>,
+    val translate: Pair<Float, Float>
+)
