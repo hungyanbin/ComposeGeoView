@@ -13,6 +13,7 @@ java {
 dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.32")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+    implementation(project(":core"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")

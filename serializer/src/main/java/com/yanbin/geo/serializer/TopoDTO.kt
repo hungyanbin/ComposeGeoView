@@ -2,7 +2,6 @@ package com.yanbin.geo.serializer
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable(with = TopoJsonSerializer::class)
 internal class TopoJSON(
     val type: String,
