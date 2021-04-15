@@ -1,7 +1,6 @@
 package com.yanbin.geo.converter
 
 import com.yanbin.geo.core.Geometry
-import com.yanbin.geo.core.PathF
 import com.yanbin.geo.core.PointF
 import com.yanbin.geo.core.PolygonF
 import com.yanbin.geo.serializer.*
@@ -44,15 +43,21 @@ class TopoJSONConverter () {
         val index = indexes[0]
 
         val pathInArc = ((arcs as MultiArc).arcs[index]) as MultiArc
-        val pathInPoint = pathInArc.arcs
+        val pathInDeltaPoints = pathInArc.arcs
+            .asSequence()
             .filterIsInstance<PositionArc>()
             .map { position ->
                 PointF(position.x.toFloat(), position.y.toFloat())
             }
 
-        val polygon = PolygonF(
-            PathF(pathInPoint)
-        )
+        val pathInAbsolutePoints = pathInDeltaPoints.scan(PointF.DEFAULT) { accPoint, delta ->
+            val endX = (accPoint.x + delta.x)
+            val endY = (accPoint.y + delta.y)
+
+            PointF(endX, endY)
+        }.drop(1)
+
+        val polygon = PolygonF(pathInAbsolutePoints.toList())
 
         return Geometry(
             polygons = listOf(polygon),

@@ -26,6 +26,8 @@ class Geometry(
         return result
     }
 
-
+    override fun toString(): String {
+        return "Geometry(polygons=$polygons, properties=$properties)"
+    }
 }
 

@@ -1,7 +1,6 @@
 package com.yanbin.geo.converter
 
 import com.yanbin.geo.core.Geometry
-import com.yanbin.geo.core.PathF
 import com.yanbin.geo.core.PointF
 import com.yanbin.geo.core.PolygonF
 import org.junit.jupiter.api.Assertions.*
@@ -35,14 +34,12 @@ internal class TopoJSONConverterTest {
         val expectGeometry = Geometry(
             polygons = listOf(
                 PolygonF(
-                    contour = PathF(
-                        listOf(
-                            PointF(0f, 0f),
-                            PointF(0f, 9999f),
-                            PointF(2000f, 0f),
-                            PointF(0f, -9999f),
-                            PointF(-2000f, 0f),
-                        )
+                    contour = listOf(
+                        PointF(0f, 0f),
+                        PointF(0f, 9999f),
+                        PointF(2000f, 9999f),
+                        PointF(2000f, 0f),
+                        PointF(0f, 0f),
                     )
                 )
             ),
