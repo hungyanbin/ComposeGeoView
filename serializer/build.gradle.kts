@@ -11,12 +11,12 @@ java {
 }
 
 dependencies {
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.32")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
-    implementation(project(":core"))
+    implementation (Dependencies.Kotlin.stdlib)
+    implementation(Dependencies.Kotlin.serializationJson)
+    implementation(project(Module.core))
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testImplementation(Dependencies.Test.jUnit5)
+    testRuntimeOnly(Dependencies.Test.jUnit5Engine)
 }
 
 tasks.withType<Test> {
