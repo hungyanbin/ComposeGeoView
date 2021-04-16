@@ -4,31 +4,21 @@ plugins {
 }
 
 android {
-    compileSdk = 30
-    buildToolsVersion = "30.0.3"
+    compileSdk = Version.Android.compileSdk
+    buildToolsVersion = Version.Android.buildTool
 
     defaultConfig {
-        minSdk = 23
-        targetSdk = 30
+        minSdk = Version.Android.minSdk
+        targetSdk = Version.Android.targetSdk
         versionCode = 1
         versionName = "1.0"
-
-        consumerProguardFiles("consumer-rules.pro")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -40,11 +30,11 @@ dependencies {
     implementation(Dependencies.Android.coreKtx)
     implementation(Dependencies.Android.appCompat)
     implementation(Dependencies.Android.material)
-    implementation (Dependencies.Android.composeUI)
-    implementation (Dependencies.Android.composeMaterial)
-    implementation (Dependencies.Android.composeUITooling)
+    implementation(Dependencies.Android.composeUI)
+    implementation(Dependencies.Android.composeMaterial)
+    implementation(Dependencies.Android.composeUITooling)
     testImplementation(Dependencies.Test.jUnit4)
 
-    implementation (project(":core"))
-    implementation (project(":serializer"))
+    implementation(project(Module.core))
+    implementation(project(Module.serializer))
 }

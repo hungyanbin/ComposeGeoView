@@ -13,7 +13,7 @@ java {
 dependencies {
     implementation (Dependencies.Kotlin.stdlib)
     implementation(Dependencies.Kotlin.serializationJson)
-    implementation(project(":core"))
+    implementation(project(Module.core))
 
     testImplementation(Dependencies.Test.jUnit5)
     testRuntimeOnly(Dependencies.Test.jUnit5Engine)
