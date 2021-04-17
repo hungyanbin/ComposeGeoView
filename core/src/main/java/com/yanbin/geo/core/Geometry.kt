@@ -30,4 +30,3 @@ class Geometry(
         return "Geometry(polygons=$polygons, properties=$properties)"
     }
 }
-

@@ -3,16 +3,18 @@ package com.yanbin.geo.converter
 import com.yanbin.geo.core.Geometry
 import com.yanbin.geo.core.PointF
 import com.yanbin.geo.core.PolygonF
-import com.yanbin.geo.serializer.*
 import com.yanbin.geo.serializer.Arc
 import com.yanbin.geo.serializer.ArcIndexList
+import com.yanbin.geo.serializer.ArcIntIndex
 import com.yanbin.geo.serializer.GeoObject
 import com.yanbin.geo.serializer.GeoType
+import com.yanbin.geo.serializer.MultiArc
+import com.yanbin.geo.serializer.PositionArc
 import com.yanbin.geo.serializer.TopoJSON
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-class TopoJSONConverter () {
+class TopoJSONConverter {
 
     fun fromString(content: String): List<Geometry> {
         val topoJSON = Json.decodeFromString<TopoJSON>(content)
@@ -22,14 +24,10 @@ class TopoJSONConverter () {
 
     private fun convertGeoObject(geoObject: GeoObject, arcs: Arc): List<Geometry> {
        return when(geoObject.type) {
-           GeoType.GeometryCollection -> {
-                geoObject.geometries!!.flatMap {
-                    convertGeoObject(it, arcs)
-                }
-            }
-           GeoType.Polygon -> {
-                listOf(convertPolygon(geoObject, arcs))
-            }
+           GeoType.GeometryCollection -> geoObject.geometries!!.flatMap {
+               convertGeoObject(it, arcs)
+           }
+           GeoType.Polygon -> listOf(convertPolygon(geoObject, arcs))
             else -> listOf()
         }
     }
@@ -42,7 +40,7 @@ class TopoJSONConverter () {
         require(indexes.size == 1)
         val index = indexes[0]
 
-        val pathInArc = ((arcs as MultiArc).arcs[index]) as MultiArc
+        val pathInArc = (arcs as MultiArc).arcs[index] as MultiArc
         val pathInDeltaPoints = pathInArc.arcs
             .asSequence()
             .filterIsInstance<PositionArc>()
@@ -51,8 +49,8 @@ class TopoJSONConverter () {
             }
 
         val pathInAbsolutePoints = pathInDeltaPoints.scan(PointF.DEFAULT) { accPoint, delta ->
-            val endX = (accPoint.x + delta.x)
-            val endY = (accPoint.y + delta.y)
+            val endX = accPoint.x + delta.x
+            val endY = accPoint.y + delta.y
 
             PointF(endX, endY)
         }.drop(1)

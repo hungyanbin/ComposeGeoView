@@ -1,6 +1,6 @@
 buildscript {
 
-    val kotlin_version = "1.4.32"
+    val kotlinVersion = "1.4.32"
 
     repositories {
         google()
@@ -9,8 +9,8 @@ buildscript {
 
     dependencies {
         classpath ("com.android.tools.build:gradle:7.0.0-alpha14")
-        classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
-        classpath ("org.jetbrains.kotlin:kotlin-serialization:$kotlin_version")
+        classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath ("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
     }
 }
 
