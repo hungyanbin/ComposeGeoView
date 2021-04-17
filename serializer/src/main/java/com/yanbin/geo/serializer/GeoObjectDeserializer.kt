@@ -1,9 +1,15 @@
 package com.yanbin.geo.serializer
 
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.float
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
-internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
+internal object GeoObjectDeserializer : JsonElementDeserializer<GeoObject> {
 
     override fun deserialize(jsonElement: JsonElement): GeoObject {
         return parseGeoObject(jsonElement.jsonObject)
@@ -12,14 +18,14 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
     private fun parseGeoObject(jsonObject: JsonObject): GeoObject {
         val type = jsonObject["type"]?.jsonPrimitive?.content
 
-        val properties: Map<String, String> = jsonObject["properties"]?.let{
+        val properties: Map<String, String> = jsonObject["properties"]?.let {
             it.jsonObject
-                .mapValues {(_, value) ->
+                .mapValues { (_, value) ->
                     value.toString()
                 }
         } ?: mapOf()
 
-        return when(type) {
+        return when (type) {
             "Point" -> parsePoint(jsonObject, properties)
             "LineString" -> parseLineString(
                 jsonObject,
@@ -46,7 +52,8 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
         jsonObject: JsonObject,
         properties: Map<String, String>
     ): GeoObject {
-        val rawGeometries: JsonArray = jsonObject["geometries"]?.jsonArray ?: throw SerializationException("Should have geometries for GeometryCollection")
+        val rawGeometries: JsonArray = jsonObject["geometries"]?.jsonArray
+            ?: throw SerializationException("Should have geometries for GeometryCollection")
 
         val geometries = rawGeometries.map { jsonElement ->
             parseGeoObject(jsonElement.jsonObject)
@@ -60,17 +67,23 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
     }
 
     private fun parsePoint(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
-        val rawCoordinates = jsonObject["coordinates"]?.jsonArray ?: throw SerializationException("Should have coordinates for Point")
+        val rawCoordinates = jsonObject["coordinates"]?.jsonArray
+            ?: throw SerializationException("Should have coordinates for Point")
         require(rawCoordinates.size == 2)
 
-        val coordinates = rawCoordinates[0].jsonPrimitive.float to rawCoordinates[1].jsonPrimitive.float
+        val coordinates =
+            rawCoordinates[0].jsonPrimitive.float to rawCoordinates[1].jsonPrimitive.float
         return GeoObject(
             type = GeoType.Point,
             properties = properties,
-            coordinates = coordinates)
+            coordinates = coordinates
+        )
     }
 
-    private fun parseLineString(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
+    private fun parseLineString(
+        jsonObject: JsonObject,
+        properties: Map<String, String>
+    ): GeoObject {
         val arcIndexes = parseArcIndexes(jsonObject, GeoType.LineString)
         return GeoObject(
             type = GeoType.LineString,
@@ -88,7 +101,10 @@ internal object GeoObjectDeserializer: JsonElementDeserializer<GeoObject> {
         )
     }
 
-    private fun parseMultiPolygon(jsonObject: JsonObject, properties: Map<String, String>): GeoObject {
+    private fun parseMultiPolygon(
+        jsonObject: JsonObject,
+        properties: Map<String, String>
+    ): GeoObject {
         val arcIndexes = parseArcIndexes(jsonObject, GeoType.MultiPolygon)
         return GeoObject(
             type = GeoType.MultiPolygon,

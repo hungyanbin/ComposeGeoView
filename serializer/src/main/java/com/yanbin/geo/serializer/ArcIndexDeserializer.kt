@@ -1,6 +1,10 @@
 package com.yanbin.geo.serializer
 
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 
 internal object ArcIndexDeserializer: JsonElementDeserializer<ArcIndex> {
 
