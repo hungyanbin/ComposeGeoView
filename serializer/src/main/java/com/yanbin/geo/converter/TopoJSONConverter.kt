@@ -19,20 +19,20 @@ class TopoJSONConverter {
     fun fromString(content: String): List<Geometry> {
         val topoJSON = Json.decodeFromString<TopoJSON>(content)
 
-        return convertGeoObject(topoJSON.geoObject, topoJSON.arcs)
+        return convertGeoObject(topoJSON.geoObject, topoJSON)
     }
 
-    private fun convertGeoObject(geoObject: GeoObject, arcs: Arc): List<Geometry> {
+    private fun convertGeoObject(geoObject: GeoObject, topoJSON: TopoJSON): List<Geometry> {
        return when(geoObject.type) {
            GeoType.GeometryCollection -> geoObject.geometries!!.flatMap {
-               convertGeoObject(it, arcs)
+               convertGeoObject(it, topoJSON)
            }
-           GeoType.Polygon -> listOf(convertPolygon(geoObject, arcs))
+           GeoType.Polygon -> listOf(convertPolygon(geoObject, topoJSON))
             else -> listOf()
         }
     }
 
-    private fun convertPolygon(geoObject: GeoObject, arcs: Arc): Geometry {
+    private fun convertPolygon(geoObject: GeoObject, topoJSON: TopoJSON): Geometry {
         val indexes = (geoObject.arcIndex as ArcIndexList).indexes[0].let { innerArcIndex ->
             (innerArcIndex as ArcIntIndex).indexes
         }
@@ -40,7 +40,7 @@ class TopoJSONConverter {
         require(indexes.size == 1)
         val index = indexes[0]
 
-        val pathInArc = (arcs as MultiArc).arcs[index] as MultiArc
+        val pathInArc = (topoJSON.arcs as MultiArc).arcs[index] as MultiArc
         val pathInDeltaPoints = pathInArc.arcs
             .asSequence()
             .filterIsInstance<PositionArc>()
@@ -55,7 +55,20 @@ class TopoJSONConverter {
             PointF(endX, endY)
         }.drop(1)
 
-        val polygon = PolygonF(pathInAbsolutePoints.toList())
+        val scaleX = topoJSON.transform?.scale?.first ?: 1f
+        val scaleY = topoJSON.transform?.scale?.second ?: 1f
+        val offsetX = topoJSON.transform?.translate?.first ?: 0f
+        val offsetY = topoJSON.transform?.translate?.second ?: 0f
+
+        val transformedPoints = pathInAbsolutePoints
+            .map { normalizedPoint ->
+                PointF(
+                    normalizedPoint.x * scaleX + offsetX,
+                    normalizedPoint.y * scaleY + offsetY
+                )
+            }
+
+        val polygon = PolygonF(transformedPoints.toList())
 
         return Geometry(
             polygons = listOf(polygon),
