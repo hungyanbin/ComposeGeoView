@@ -104,20 +104,33 @@ class TopoJSONConverter {
     private fun constructArcFromIndex(
         topoJSON: TopoJSON,
         index: Int
-    ): Sequence<PointF> {
-        val pathInArc = (topoJSON.arcs as MultiArc).arcs[index] as MultiArc
+    ): List<PointF> {
+        val isInverse = index < 0
+        val nonNegativeIndex = if (isInverse) index.inv() else index
+
+        val pathInArc = (topoJSON.arcs as MultiArc).arcs[nonNegativeIndex] as MultiArc
         val pathInDeltaPoints = pathInArc.arcs
-            .asSequence()
             .filterIsInstance<PositionArc>()
             .map { position ->
                 PointF(position.x.toFloat(), position.y.toFloat())
             }
 
-        return pathInDeltaPoints.scan(PointF.DEFAULT) { accPoint, delta ->
-            val endX = accPoint.x + delta.x
-            val endY = accPoint.y + delta.y
+        return pathInDeltaPoints
+            .scan(PointF.DEFAULT) { accPoint, delta ->
+                val endX = accPoint.x + delta.x
+                val endY = accPoint.y + delta.y
 
-            PointF(endX, endY)
-        }.drop(1)
+                PointF(endX, endY)
+            }
+            .drop(1)
+            .reverseWhen { isInverse }
+    }
+}
+
+fun <T> List<T>.reverseWhen(check: () -> Boolean): List<T> {
+    return if(check()) {
+        this.reversed()
+    } else {
+        this
     }
 }
