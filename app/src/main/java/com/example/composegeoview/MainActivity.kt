@@ -8,14 +8,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.composegeoview.ui.theme.ComposeGeoViewTheme
 import com.yanbin.geo.converter.TopoJSONConverter
-import com.yanbin.geo.geoview.Coordinate
-import com.yanbin.geo.geoview.CoordinateLocal
 import com.yanbin.geo.geoview.Polygon
+import com.yanbin.geo.geoview.TransformableCoordinate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +22,6 @@ class MainActivity : ComponentActivity() {
             ComposeGeoViewTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Yanbin")
                     GeoDemo()
                 }
             }
@@ -51,9 +48,7 @@ fun GeoDemo() {
 
     val model = TopoJSONConverter().fromString(taiwanJson)
 
-    CompositionLocalProvider(
-        CoordinateLocal provides Coordinate.TAIWAN
-    ) {
+    TransformableCoordinate {
         model.forEach { geometry ->
             geometry.polygons.forEach { polygonF ->
                 Polygon(
@@ -64,3 +59,4 @@ fun GeoDemo() {
         }
     }
 }
+
