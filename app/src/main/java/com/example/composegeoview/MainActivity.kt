@@ -9,9 +9,11 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.composegeoview.ui.theme.ComposeGeoViewTheme
 import com.yanbin.geo.converter.TopoJSONConverter
+import com.yanbin.geo.geoview.OutlinedPolygon
 import com.yanbin.geo.geoview.Polygon
 import com.yanbin.geo.geoview.TransformableCoordinate
 
@@ -51,11 +53,21 @@ fun GeoDemo() {
     TransformableCoordinate {
         model.forEach { geometry ->
             geometry.polygons.forEach { polygonF ->
-                Polygon(
+                OutlinedPolygon(
                     modifier = Modifier.fillMaxSize(),
                     data = polygonF
                 )
             }
+        }
+
+        val filledGeometry = model[5]
+
+        filledGeometry.polygons.forEach { polygonF ->
+            Polygon(
+                modifier = Modifier.fillMaxSize(),
+                data = polygonF,
+                color = Color.Red
+            )
         }
     }
 }
