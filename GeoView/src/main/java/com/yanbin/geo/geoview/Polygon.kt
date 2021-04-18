@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import com.yanbin.geo.core.PolygonF
 
 @Composable
@@ -14,16 +16,26 @@ fun Polygon(
     data: PolygonF,
     color: Color = MaterialTheme.colors.primary
 ) {
-    val scale = 150
-    val translateX = -118
-    val translateY = 31
+    val scale = CoordinateLocal.current.scale
+    val translateX = -CoordinateLocal.current.longitude
+    val translateY = CoordinateLocal.current.latitude
+
     Canvas(modifier) {
-        data.contour.pairewise().forEach { (startPoint, endPoint) ->
-            drawLine(
-                start = Offset((startPoint.x + translateX) * scale, -(startPoint.y - translateY) * scale),
-                end = Offset((endPoint.x + translateX) * scale, -(endPoint.y - translateY) * scale),
-                color = color
-            )
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+
+        withTransform({
+            // Why reversed order???
+            scale(scale)
+            translate(canvasWidth / 2 + translateX, canvasHeight / 2 + translateY)
+        }) {
+            data.contour.pairewise().forEach { (startPoint, endPoint) ->
+                drawLine(
+                    start = Offset(startPoint.x, -startPoint.y),
+                    end = Offset(endPoint.x, -endPoint.y),
+                    color = color
+                )
+            }
         }
     }
 }
